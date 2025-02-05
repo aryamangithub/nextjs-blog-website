@@ -1,10 +1,14 @@
 "use client"
-import { createNewCategory } from "@/lib/firebase/categories/write";
+import { getCategory } from "@/lib/firebase/categories/read";
+import { createNewCategory, deleteCategory, updateCategory } from "@/lib/firebase/categories/write";
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 
 const CategoryFormContext = createContext()
 
 export default function CategoryFormContextProvider({children}){
+
+    const router = useRouter()
     const [data, setData] = useState({})
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -32,6 +36,50 @@ export default function CategoryFormContextProvider({children}){
         setIsLoading(false)
     }
 
+    const handleUpdate = async() => {
+        setError(null)
+        setIsLoading(true)
+        setIsDone(false)
+        try{
+            await updateCategory({data: data, image: image})
+            setIsDone(true)
+        } catch(error){
+            setError(error?.message)
+        }
+        setIsLoading(false)
+    }
+    
+    const handleDelete = async(id) => {
+        setError(null)
+        setIsLoading(true)
+        setIsDone(false)
+        try{
+            await deleteCategory(id)
+            setIsDone(true)
+            router.push('/admin/categories')
+        } catch(error){
+            setError(error?.message)
+        }
+        setIsLoading(false)
+    }
+    
+    const fetchData = async (id) => {
+        setError(null)
+        setIsLoading(true)
+        setIsDone(false)
+        try{
+            const response = await getCategory(id)
+            if(response.exists()){
+                setData(response.data())
+            } else{
+                throw new Error(`No Category found from id ${id}`)
+            }
+        } catch(error){
+            setError(error?.message)
+        }
+        setIsLoading(false)
+    }
+
     return(
         <CategoryFormContext.Provider
             value={{
@@ -39,10 +87,13 @@ export default function CategoryFormContextProvider({children}){
                 isLoading,
                 error,
                 isDone,
-                image,
-                setImage,
                 handleData,
                 handleCreate,
+                handleUpdate,
+                handleDelete,
+                image,
+                setImage,
+                fetchData,
             }}
         >
             {children}
