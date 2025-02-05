@@ -1,7 +1,8 @@
-import { ArrowRight, Home, List, MessageCircle, MoveRight } from "lucide-react";
+import { Home, List, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Login from "@/app/components/Auth/Login"
+import AuthContextProvider from "@/lib/contexts/AuthContext";
 
 export default function Header() {
     return(
@@ -15,25 +16,29 @@ export default function Header() {
                 </div>
             </Link>
             <ul className="flex gap-6 items-center text-sm font-medium">
-                <li className="flex items-center gap-2">
-                    <Home/>
-                    Home
-                </li>
-                <li className="flex items-center gap-2">
-                    <List/>
-                    Blog
-                </li>
-                <li className="flex items-center gap-2">
-                    <MessageCircle/>
-                    Contact
-                </li>
+                <Link href="/">
+                    <li className="flex items-center gap-2">
+                        <Home/>
+                        Home
+                    </li>
+                </Link>
+                <Link href="/blogs">
+                    <li className="flex items-center gap-2">
+                        <List/>
+                        Blog
+                    </li>
+                </Link>
+                <Link href="/contact">
+                    <li className="flex items-center gap-2">
+                        <MessageCircle/>
+                        Contact
+                    </li>
+                </Link>
             </ul>
-            <div className="flex gap-3">
-                <Login/>
-                <button className="flex items-center justify-center bg-black text-white h-10 px-4 py-2 rounded-md text-sm font-medium hover:bg-black/90 ">
-                    Get Started <ArrowRight/>
-                </button>
-            </div>
+
+            <AuthContextProvider>
+                    <Login/>
+            </AuthContextProvider>
         </nav>
     )
 }
