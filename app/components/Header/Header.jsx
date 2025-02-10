@@ -22,10 +22,10 @@ export default function Header() {
                         Home
                     </li>
                 </Link>
-                <Link href="/blogs">
+                <Link href="/categories">
                     <li className="flex items-center gap-2">
                         <List/>
-                        Blog
+                        Categories
                     </li>
                 </Link>
                 <Link href="/contact">
