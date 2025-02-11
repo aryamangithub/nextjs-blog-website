@@ -1,6 +1,7 @@
 import { db, storage } from "@/lib/firebase"
 import { deleteDoc, doc, setDoc, Timestamp, updateDoc } from "firebase/firestore"
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage"
+import { mutate } from "swr"
 
 export const createNewPost = async({data, image}) => {
     if(!data?.title){
@@ -55,4 +56,8 @@ export const deletePost  = async(id) => {
     }
 
     await deleteDoc(doc(db, `posts/${id}`))
+    const imageRef = ref(storage, `posts/${id}.png`)
+    await deleteObject(imageRef).catch((error) => console.warn("Image not found", error))
+
+    mutate("posts")
 }
